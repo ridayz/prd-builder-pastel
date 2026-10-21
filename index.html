@@ -1,0 +1,1534 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PRD Builder — brief yang bisa dibaca AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg-top:#f7fbff;
+    --bg-bottom:#eaf2fd;
+    --surface:#ffffff;
+    --surface-soft:#f6faff;
+    --surface-sunken:#f2f7fe;
+    --line:#dbe7f7;
+    --line-strong:#c8dcf4;
+    --ink:#16233a;
+    --ink-soft:#5a6b85;
+    --ink-faint:#8695ac;
+    --blue-50:#eff6ff;
+    --blue-100:#dcebfd;
+    --blue-200:#c3dbfa;
+    --blue-300:#9fc5f5;
+    --blue-500:#4d84e8;
+    --blue-600:#3a6fd4;
+    --blue-700:#2f5cb3;
+    --mint:#3fa88b;
+    --amber:#c98a24;
+    --rose:#d0576b;
+    --shadow-xs:0 1px 2px rgba(23,53,97,.05);
+    --shadow-sm:0 1px 2px rgba(23,53,97,.05), 0 4px 12px -8px rgba(23,53,97,.20);
+    --shadow-md:0 2px 4px rgba(23,53,97,.04), 0 14px 34px -22px rgba(23,53,97,.34);
+    --shadow-lg:0 4px 8px rgba(23,53,97,.04), 0 26px 60px -32px rgba(23,53,97,.40);
+    --r-sm:10px;
+    --r-md:14px;
+    --r-lg:18px;
+    --r-xl:24px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 620px at 8% -12%, #e9f2ff 0%, rgba(233,242,255,0) 62%),
+      radial-gradient(880px 520px at 102% 2%, #f1f7ff 0%, rgba(241,247,255,0) 58%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#cfe2fd;color:#12213a}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:30;
+    background:rgba(255,255,255,.84);
+    backdrop-filter:blur(16px) saturate(140%);
+    -webkit-backdrop-filter:blur(16px) saturate(140%);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 12px 32px -28px rgba(23,53,97,.6);
+  }
+  .topbar-inner{
+    max-width:1580px;margin:0 auto;padding:12px 22px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand-mark{
+    width:38px;height:38px;border-radius:12px;flex:none;
+    display:grid;place-items:center;
+    background:linear-gradient(150deg,#e8f1ff 0%,#d5e6fd 55%,#c6dcfb 100%);
+    border:1px solid #cfe2fb;
+    box-shadow:inset 0 1px 0 #fff, 0 6px 14px -10px rgba(47,92,179,.7);
+    color:var(--blue-600);
+  }
+  .brand-text{min-width:0}
+  .brand-title{font-size:15px;font-weight:800;letter-spacing:-.2px;line-height:1.15;white-space:nowrap}
+  .brand-sub{font-size:11.5px;color:var(--ink-faint);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .spacer{flex:1 1 auto}
+
+  .readiness{
+    display:flex;align-items:center;gap:9px;
+    padding:6px 12px 6px 8px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--line);
+    box-shadow:var(--shadow-sm);
+  }
+  .readiness .ring{flex:none}
+  .readiness .rt{line-height:1.1}
+  .readiness .rt b{display:block;font-size:12.5px;font-weight:800;letter-spacing:-.1px}
+  .readiness .rt span{font-size:10.5px;color:var(--ink-faint);font-weight:600;letter-spacing:.02em}
+
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    height:36px;padding:0 13px;border-radius:11px;
+    font-family:inherit;font-size:12.5px;font-weight:700;line-height:1;
+    color:var(--ink);background:var(--surface);
+    border:1px solid var(--line);box-shadow:var(--shadow-xs);
+    cursor:pointer;white-space:nowrap;
+    transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .12s ease,color .18s ease;
+  }
+  .btn:hover{background:var(--blue-50);border-color:var(--blue-200);box-shadow:var(--shadow-sm)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(77,132,232,.24)}
+  .btn svg{flex:none}
+  .btn-primary{
+    color:#fff;border-color:transparent;
+    background:linear-gradient(180deg,#5a8dec 0%,#4579e3 100%);
+    box-shadow:0 1px 0 rgba(255,255,255,.35) inset, 0 10px 22px -14px rgba(58,111,212,.9);
+  }
+  .btn-primary:hover{background:linear-gradient(180deg,#5f92f0 0%,#3a6fd4 100%);border-color:transparent}
+  .btn-ghost{background:transparent;border-color:transparent;box-shadow:none;color:var(--ink-soft)}
+  .btn-ghost:hover{background:var(--blue-50);border-color:transparent;box-shadow:none;color:var(--blue-700)}
+  .btn-sm{height:30px;padding:0 10px;font-size:11.5px;border-radius:9px}
+  .btn-icon{width:34px;height:34px;padding:0;border-radius:10px}
+
+  /* ---------- layout ---------- */
+  .workspace{
+    width:100%;max-width:1580px;margin:0 auto;
+    padding:20px 22px 56px;
+    display:grid;grid-template-columns:252px minmax(0,1fr) 404px;
+    gap:20px;align-items:start;
+  }
+
+  /* ---------- rail ---------- */
+  .rail{position:sticky;top:86px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .rail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 4px}
+  .rail-head h2{
+    margin:0;font-size:10.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .search{position:relative}
+  .search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-faint);pointer-events:none}
+  .search input{
+    width:100%;height:34px;padding:0 10px 0 31px;border-radius:10px;
+    border:1px solid var(--line);background:var(--surface);
+    font:inherit;font-size:12.5px;color:var(--ink);box-shadow:var(--shadow-xs);
+  }
+  .search input::placeholder{color:var(--ink-faint)}
+  .search input:focus{outline:none;border-color:var(--blue-300);box-shadow:0 0 0 3px rgba(77,132,232,.16)}
+
+  .prd-list{display:flex;flex-direction:column;gap:7px;max-height:calc(100vh - 260px);overflow:auto;padding:2px}
+  .prd-item{
+    position:relative;display:flex;align-items:flex-start;gap:8px;text-align:left;
+    width:100%;padding:10px 10px 10px 11px;border-radius:12px;
+    background:var(--surface);border:1px solid var(--line);
+    cursor:pointer;box-shadow:var(--shadow-xs);
+    transition:border-color .16s ease,box-shadow .16s ease,background .16s ease,transform .12s ease;
+  }
+  .prd-item:hover{border-color:var(--blue-200);box-shadow:var(--shadow-sm)}
+  .prd-item[aria-current="true"]{
+    border-color:var(--blue-300);background:linear-gradient(180deg,#f7fbff,#eef6ff);
+    box-shadow:inset 3px 0 0 var(--blue-500), var(--shadow-sm);
+  }
+  .prd-item .pi-body{min-width:0;flex:1}
+  .prd-item .pi-title{
+    font-size:12.5px;font-weight:700;line-height:1.35;color:var(--ink);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .prd-item .pi-meta{font-size:10.5px;color:var(--ink-faint);margin-top:3px;font-weight:600}
+  .prd-item .pi-del{
+    flex:none;width:22px;height:22px;border-radius:7px;border:1px solid transparent;background:transparent;
+    color:var(--ink-faint);cursor:pointer;display:grid;place-items:center;opacity:0;
+    transition:opacity .14s ease,background .14s ease,color .14s ease;
+  }
+  .prd-item:hover .pi-del,.prd-item:focus-within .pi-del{opacity:1}
+  .prd-item .pi-del:hover{background:#fdeef1;color:var(--rose);border-color:#f8dbe2}
+  .prd-empty{
+    border:1px dashed var(--line-strong);border-radius:12px;padding:18px 14px;text-align:center;
+    color:var(--ink-faint);font-size:12px;line-height:1.5;background:rgba(255,255,255,.55);
+  }
+
+  /* ---------- editor ---------- */
+  .editor{display:flex;flex-direction:column;gap:16px;min-width:0}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow-md);
+    padding:18px 20px 20px;
+    position:relative;
+  }
+  .card-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:14px}
+  .step{
+    flex:none;width:23px;height:23px;border-radius:8px;margin-top:1px;
+    display:grid;place-items:center;
+    font-size:11px;font-weight:800;color:var(--blue-700);
+    background:linear-gradient(180deg,#eaf3ff,#dbeafd);
+    border:1px solid #cfe2fb;box-shadow:0 1px 0 #fff inset;
+  }
+  .card-head h3{margin:0;font-size:13.5px;font-weight:800;letter-spacing:-.15px;line-height:1.3}
+  .card-head p{margin:3px 0 0;font-size:11.5px;line-height:1.45;color:var(--ink-faint);font-weight:500}
+  .card-head .head-extra{margin-left:auto;display:flex;gap:6px;align-items:center}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .field + .field{margin-top:0}
+  .field-label{
+    display:flex;align-items:center;gap:6px;
+    font-size:11px;font-weight:800;letter-spacing:.045em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .needs{
+    font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:none;
+    padding:2px 6px;border-radius:6px;color:var(--blue-700);background:var(--blue-100);border:1px solid var(--blue-200);
+  }
+  .needs-soft{
+    font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:none;
+    padding:2px 6px;border-radius:6px;color:var(--ink-faint);background:var(--surface-sunken);border:1px solid var(--line);
+  }
+  .tipline{font-size:11px;line-height:1.5;color:var(--ink-faint);font-weight:500}
+
+  input[type="text"],textarea,select{
+    width:100%;font:inherit;font-size:13px;color:var(--ink);
+    background:var(--surface-soft);border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:9px 11px;box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+  }
+  input[type="text"]::placeholder,textarea::placeholder{color:#9aa8bd;font-weight:400}
+  input[type="text"]:hover,textarea:hover,select:hover{border-color:var(--line-strong)}
+  input[type="text"]:focus,textarea:focus,select:focus{
+    outline:none;background:#fff;border-color:var(--blue-300);
+    box-shadow:0 0 0 3px rgba(77,132,232,.15), 0 1px 0 rgba(255,255,255,.8) inset;
+  }
+  textarea{resize:vertical;line-height:1.6;min-height:76px}
+  input.title-input{font-size:19px;font-weight:800;letter-spacing:-.35px;padding:11px 13px;background:#fff}
+  input.title-input::placeholder{font-weight:700;color:#a9b6c9}
+  select{appearance:none;cursor:pointer;padding-right:30px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a6b85' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 10px center;
+  }
+
+  /* repeater */
+  .rep{display:flex;flex-direction:column;gap:7px}
+  .rep-rows{display:flex;flex-direction:column;gap:7px}
+  .rep-row{display:flex;align-items:center;gap:8px}
+  .rep-row .rk{
+    flex:none;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;
+    font-size:10px;font-weight:800;color:var(--blue-600);background:var(--blue-50);border:1px solid var(--blue-100);
+  }
+  .rep-row input{flex:1;min-width:0}
+  .rep-row .del{
+    flex:none;width:28px;height:28px;border-radius:8px;border:1px solid transparent;background:transparent;
+    color:var(--ink-faint);cursor:pointer;display:grid;place-items:center;
+    transition:background .14s,color .14s,border-color .14s;
+  }
+  .rep-row .del:hover{background:#fdeef1;color:var(--rose);border-color:#f8dbe2}
+  .add{
+    align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
+    height:29px;padding:0 10px;border-radius:9px;cursor:pointer;
+    font-family:inherit;font-size:11.5px;font-weight:700;color:var(--blue-700);
+    background:var(--blue-50);border:1px dashed var(--blue-200);
+    transition:background .16s,border-color .16s;
+  }
+  .add:hover{background:#e6f1ff;border-color:var(--blue-300);border-style:solid}
+  .add:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(77,132,232,.22)}
+
+  /* feature rows */
+  .feat-rows{display:flex;flex-direction:column;gap:9px}
+  .feat{
+    display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) 108px 28px;gap:8px;align-items:start;
+    padding:10px;border-radius:12px;background:var(--surface-soft);border:1px solid var(--line);
+  }
+  .feat input,.feat select{background:#fff;font-size:12.5px;padding:8px 10px}
+  .feat .del{width:28px;height:28px;margin-top:2px}
+  .prio{display:flex;flex-direction:column;gap:4px}
+  .prio select{height:34px;padding-top:0;padding-bottom:0}
+
+  /* optional details */
+  .detail-card{padding:0;overflow:hidden}
+  .detail-card summary{
+    display:flex;align-items:center;gap:11px;padding:15px 18px;
+    cursor:pointer;list-style:none;transition:background .16s ease;
+  }
+  .detail-card summary::-webkit-details-marker{display:none}
+  .detail-card summary:hover{background:var(--surface-soft)}
+  .detail-card summary:focus-visible{outline:none;box-shadow:inset 0 0 0 3px rgba(77,132,232,.2)}
+  .step-ghost{background:var(--surface-sunken);border:1px dashed var(--line-strong);color:var(--ink-faint);font-size:12px}
+  .sum-text{display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left}
+  .sum-text b{font-size:13px;font-weight:800;letter-spacing:-.1px}
+  .sum-text i{font-style:normal;font-size:11.5px;color:var(--ink-faint)}
+  .sum-count{
+    margin-left:auto;flex:none;font-size:10.5px;font-weight:800;color:var(--blue-700);
+    background:var(--blue-50);border:1px solid var(--blue-100);border-radius:8px;padding:3px 7px;
+  }
+  .chev{flex:none;color:var(--ink-faint);transition:transform .2s ease}
+  .detail-card[open] .chev{transform:rotate(180deg)}
+  .detail-card[open] summary{border-bottom:1px solid var(--line)}
+  .detail-body{padding:16px 18px 18px}
+
+  .optline{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:9px;font-size:11px;font-weight:600;color:var(--ink-faint)}
+  .optline button{
+    font:inherit;font-size:11px;font-weight:700;color:var(--blue-700);background:none;border:none;
+    padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px;
+  }
+  .optline button:hover{color:var(--blue-600)}
+  .optline button:focus-visible{outline:none;border-radius:4px;box-shadow:0 0 0 3px rgba(77,132,232,.2)}
+
+  /* ---------- brief pane ---------- */
+  .brief{position:sticky;top:86px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .brief-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow-lg);overflow:hidden;
+  }
+  .brief-head{
+    display:flex;align-items:center;gap:9px;padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#ffffff,#f7fbff);
+  }
+  .brief-head h3{margin:0;font-size:12.5px;font-weight:800;letter-spacing:-.1px}
+  .brief-head .dot{
+    width:7px;height:7px;border-radius:50%;background:var(--mint);flex:none;
+    box-shadow:0 0 0 3px rgba(63,168,139,.16);
+  }
+  .brief-head .spacer{flex:1}
+  .brief-head .chars{font-size:10.5px;font-weight:700;color:var(--ink-faint)}
+
+  .checks{padding:12px 14px;border-bottom:1px solid var(--line);background:#fbfdff}
+  .checks-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+  .checks-top b{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .checks-top span{font-size:10.5px;font-weight:700;color:var(--ink-faint)}
+  .bar{height:6px;border-radius:999px;background:#e6eefa;overflow:hidden;margin-bottom:10px}
+  .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#7fb0f2,#4d84e8);transition:width .35s ease}
+  .miss{display:flex;flex-direction:column;gap:4px;margin:0;padding:0;list-style:none}
+  .miss li{display:flex}
+  .miss button{
+    display:flex;align-items:center;gap:6px;width:100%;text-align:left;
+    font-family:inherit;font-size:11.5px;font-weight:600;color:#8a5a1f;
+    background:#fff8ec;border:1px solid #f3e2c6;border-radius:9px;padding:6px 8px;cursor:pointer;
+    transition:background .15s,border-color .15s;
+  }
+  .miss button:hover{background:#fdf1dc;border-color:#ecd3ab}
+  .miss button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(201,138,36,.22)}
+  .miss .ic{flex:none;color:var(--amber)}
+  .allgood{
+    display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:#2f7f68;
+    background:#f0fbf7;border:1px solid #cdeee3;border-radius:9px;padding:7px 9px;
+  }
+
+  .code-wrap{position:relative}
+  pre.md{
+    margin:0;padding:14px 15px 20px;max-height:calc(100vh - 420px);overflow:auto;
+    font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:11.5px;line-height:1.72;color:#33445f;white-space:pre-wrap;word-break:break-word;
+    background:
+      linear-gradient(180deg,#fdfefe 0%,#fbfdff 100%);
+  }
+  pre.md::-webkit-scrollbar{width:9px}
+  pre.md::-webkit-scrollbar-thumb{background:#dae6f6;border-radius:99px;border:2px solid #fbfdff}
+  pre.md::-webkit-scrollbar-track{background:transparent}
+  .md .h1{color:#1d3a67;font-weight:700}
+  .md .h2{color:#2f5cb3;font-weight:600}
+  .md .q{color:#5f7595;font-style:italic}
+  .md .meta{color:#96a5bb}
+  .md .k{color:#3a6fd4}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    display:flex;align-items:center;gap:8px;
+    padding:9px 14px;border-radius:12px;
+    background:rgba(22,35,58,.94);color:#fff;font-size:12.5px;font-weight:700;
+    box-shadow:0 18px 40px -20px rgba(22,35,58,.8);
+    opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:80;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast svg{color:#7fd8bb}
+
+  /* ---------- generate modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px}
+  .modal[hidden]{display:none}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(23,53,97,.30);backdrop-filter:blur(4px);animation:fadeIn .18s ease}
+  .modal-panel{
+    position:relative;width:min(880px,100%);max-height:min(88vh,920px);
+    display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;
+    background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    box-shadow:0 40px 90px -40px rgba(23,53,97,.62), 0 8px 24px -16px rgba(23,53,97,.42);
+    animation:popIn .2s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes popIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+  .modal-head{display:flex;gap:12px;align-items:flex-start;padding:18px 20px 12px}
+  .modal-head h2{margin:0;font-size:16px;font-weight:800;letter-spacing:-.25px}
+  .modal-head p{margin:4px 0 0;font-size:12px;color:var(--ink-faint);line-height:1.5}
+  .modal-head .spacer{flex:1}
+  .modal-tabs{display:flex;gap:6px;padding:0 20px 12px;flex-wrap:wrap}
+  .modal-tabs button{
+    height:30px;padding:0 12px;border-radius:9px;border:1px solid var(--line);
+    background:var(--surface-soft);font-family:inherit;font-size:11.5px;font-weight:700;
+    color:var(--ink-soft);cursor:pointer;transition:background .16s,border-color .16s,color .16s;
+  }
+  .modal-tabs button:hover{border-color:var(--blue-200);color:var(--blue-700)}
+  .modal-tabs button[aria-selected="true"]{
+    background:#fff;border-color:var(--blue-300);color:var(--blue-700);box-shadow:var(--shadow-xs);
+  }
+  .modal-tabs button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(77,132,232,.22)}
+  .gen-warn{
+    margin:0 20px 10px;padding:8px 10px;border-radius:10px;
+    background:#fff8ec;border:1px solid #f3e2c6;font-size:11.5px;font-weight:600;color:#8a5a1f;line-height:1.5;
+  }
+  .gen-warn[hidden]{display:none}
+  .gen-warn.ok{background:#f0fbf7;border-color:#cdeee3;color:#2f7f68}
+  pre.gen-out{
+    margin:0 20px;border:1px solid var(--line);border-radius:14px;
+    max-height:none;overflow:auto;background:#fbfdff;
+  }
+  .modal-foot{display:flex;align-items:center;gap:9px;padding:14px 20px 18px;flex-wrap:wrap}
+  .modal-foot .spacer{flex:1}
+  .modal-foot .tipline{font-size:11px}
+
+  /* mobile view tabs */
+  .viewtabs{display:none;gap:6px;padding:4px;background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-xs)}
+  .viewtabs button{
+    flex:1;height:32px;border-radius:9px;border:1px solid transparent;background:transparent;
+    font-family:inherit;font-size:12px;font-weight:700;color:var(--ink-soft);cursor:pointer;
+  }
+  .viewtabs button[aria-selected="true"]{background:#fff;border-color:var(--line);color:var(--blue-700);box-shadow:var(--shadow-xs)}
+
+  .footnote{font-size:11px;line-height:1.55;color:var(--ink-faint);text-align:center;padding:0 8px}
+
+  .foot-links{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;font-size:11px;color:var(--ink-faint);font-weight:600}
+  .foot-links button{
+    display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:11px;font-weight:700;
+    color:var(--blue-700);background:none;border:none;padding:2px 4px;border-radius:6px;cursor:pointer;
+    transition:background .15s ease,color .15s ease;
+  }
+  .foot-links button:hover{background:var(--blue-50);color:var(--blue-600)}
+  .foot-links button:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(77,132,232,.22)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1320px){
+    .workspace{grid-template-columns:232px minmax(0,1fr) 356px;gap:16px}
+    pre.md{font-size:11px}
+  }
+  @media (max-width:1140px){
+    .workspace{grid-template-columns:minmax(0,1fr);padding:16px 16px 48px}
+    .rail{position:static}
+    .prd-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
+    .prd-item{min-width:196px;max-width:224px}
+    .brief{position:static}
+    pre.md{max-height:none}
+    .viewtabs{display:flex}
+    body[data-view="write"] .brief{display:none}
+    body[data-view="brief"] .editor{display:none}
+    .brand-sub{display:none}
+  }
+  @media (max-width:760px){
+    .topbar-inner{padding:10px 14px;gap:10px}
+    .brand-title{font-size:14px}
+    .actions{gap:6px;width:100%}
+    .actions .btn{flex:1;padding:0 8px}
+    .readiness{order:3}
+    .workspace{padding:14px 12px 44px;gap:14px}
+    .card{padding:15px 14px 16px;border-radius:16px}
+    .grid-2{grid-template-columns:1fr}
+    .feat{grid-template-columns:1fr 1fr;gap:7px}
+    .feat .f-name{grid-column:1 / -1}
+    .feat .f-desc{grid-column:1 / -1}
+    input.title-input{font-size:16.5px}
+    .readiness{display:none}
+    .modal{padding:10px}
+    .modal-panel{max-height:92vh;border-radius:18px}
+    .modal-head,.modal-tabs,.modal-foot{padding-left:14px;padding-right:14px}
+    .gen-warn,pre.gen-out{margin-left:14px;margin-right:14px}
+    .modal-foot .spacer{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body data-view="write">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/>
+          <path d="M9.5 8h5M9.5 11.5h5M9.5 15h3"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">PRD Builder</div>
+        <div class="brand-sub">Tulis maksudmu, AI baca brief-nya</div>
+      </div>
+    </div>
+
+    <div class="readiness" title="Seberapa siap brief ini dibaca AI">
+      <svg class="ring" width="34" height="34" viewBox="0 0 36 36" aria-hidden="true">
+        <circle cx="18" cy="18" r="14" fill="none" stroke="#e6eefa" stroke-width="4"/>
+        <circle id="ringArc" cx="18" cy="18" r="14" fill="none" stroke="#4d84e8" stroke-width="4"
+                stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="88"
+                transform="rotate(-90 18 18)"/>
+      </svg>
+      <div class="rt"><b id="pctText">0%</b><span>siap dibaca AI</span></div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" id="btnExample" type="button" title="Muat contoh PRD">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+        Contoh
+      </button>
+      <button class="btn" id="btnNew" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        PRD baru
+      </button>
+      <button class="btn" id="btnJson" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/></svg>
+        .json
+      </button>
+      <button class="btn" id="btnMd" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16"/></svg>
+        .md
+      </button>
+      <button class="btn btn-primary" id="btnGenerate" type="button" aria-haspopup="dialog">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.6 4.7 1.4-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4L12 3Z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/></svg>
+        Generate
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- RAIL -->
+  <aside class="rail" aria-label="Daftar PRD">
+    <div class="rail-head">
+      <h2>Dokumen</h2>
+      <span class="tipline" id="prdCount">0</span>
+    </div>
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="searchInput" type="text" placeholder="Cari PRD…" aria-label="Cari PRD" />
+    </div>
+    <div class="prd-list" id="prdList" role="list"></div>
+    <p class="footnote">Tersimpan otomatis di browser ini. Ekspor <b>.md</b> / <b>.json</b> untuk dibawa ke tempat lain.</p>
+  </aside>
+
+  <div class="viewtabs" role="tablist" aria-label="Tampilan">
+    <button type="button" role="tab" id="tabWrite" aria-selected="true" aria-controls="editorPane">Isi PRD</button>
+    <button type="button" role="tab" id="tabBrief" aria-selected="false" aria-controls="briefPane">Brief AI</button>
+  </div>
+
+  <!-- EDITOR -->
+  <section class="editor" id="editorPane" aria-label="Isi PRD">
+
+    <div class="card">
+      <div class="field">
+        <label class="field-label" for="fTitle">Judul PRD</label>
+        <input class="title-input" id="fTitle" data-field="title" type="text" placeholder="Ekspor rekap tiket ke Excel" autocomplete="off" />
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label class="field-label" for="fOne">Hasil akhirnya apa? Satu kalimat</label>
+        <input id="fOne" data-field="oneLiner" type="text" placeholder="Tim lapangan bisa unduh rekap mingguan sendiri, tanpa minta admin." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="card" id="sec1" tabindex="-1">
+      <div class="card-head">
+        <span class="step">1</span>
+        <div>
+          <h3>Masalahnya apa</h3>
+          <p>Kondisi nyata hari ini, bukan solusi yang kamu bayangkan.</p>
+        </div>
+      </div>
+      <div class="field">
+        <textarea id="fProblem" data-field="problem" rows="4" placeholder="Tiap Senin admin rekap 40 tiket dari 3 sheet: 2 jam, dan pernah salah hitung 2x bulan lalu."></textarea>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label class="field-label" for="fUser">Siapa yang pakai <span class="needs-soft">opsional</span></label>
+        <input id="fUser" data-field="user" type="text" placeholder="Teknisi lapangan, 3 orang, pakai laptop Chrome." autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="card" id="sec2" tabindex="-1">
+      <div class="card-head">
+        <span class="step">2</span>
+        <div>
+          <h3>Yang harus bisa dilakukan</h3>
+          <p>Satu baris satu perilaku. Prioritas dipakai AI untuk memotong scope.</p>
+        </div>
+        <div class="head-extra">
+          <button class="btn btn-sm" id="btnAddFeat" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Fitur
+          </button>
+        </div>
+      </div>
+      <div class="feat-rows" id="featRows"></div>
+    </div>
+
+    <div class="card" id="sec3" tabindex="-1">
+      <div class="card-head">
+        <span class="step">3</span>
+        <div>
+          <h3>Gimana tahu sudah selesai</h3>
+          <p>Dua-tiga poin yang bisa diuji. Ini rem AI biar nggak nambah terus.</p>
+        </div>
+      </div>
+      <div class="field">
+        <div class="rep" data-rep="acceptance"></div>
+      </div>
+    </div>
+
+    <details class="card detail-card" id="secDetail">
+      <summary>
+        <span class="step step-ghost" aria-hidden="true">+</span>
+        <span class="sum-text">
+          <b>Detail opsional</b>
+          <i>Tujuan, batas, alur, teknis — isi kalau perlu aja</i>
+        </span>
+        <span class="sum-count" id="detailCount">0/9</span>
+        <svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+
+      <div class="detail-body">
+        <div class="field">
+          <span class="field-label">Tujuan</span>
+          <div class="rep" data-rep="goals"></div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <span class="field-label">Non-tujuan (jangan dikerjakan)</span>
+          <div class="rep" data-rep="nonGoals"></div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <span class="field-label">Anti-goal (gagal walau fiturnya jalan)</span>
+          <div class="rep" data-rep="antiGoals"></div>
+        </div>
+
+        <div class="grid-2" style="margin-top:14px">
+          <div class="field">
+            <label class="field-label" for="fWhy">Kenapa sekarang</label>
+            <input id="fWhy" data-field="whyNow" type="text" placeholder="Tenggat / pemicu yang bikin nggak bisa ditunda." autocomplete="off" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="fMetric">Ukuran berhasil</label>
+            <input id="fMetric" data-field="metric" type="text" placeholder="Rekap selesai &lt; 10 menit, tanpa admin." autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <span class="field-label">Alur utama</span>
+          <div class="rep" data-rep="flow"></div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label" for="fConstraints">Batasan teknis / aturan main</label>
+          <textarea id="fConstraints" data-field="constraints" placeholder="Stack, dependency yang dilarang, data yang nggak boleh keluar server."></textarea>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <span class="field-label">Pertanyaan terbuka (AI jangan mengarang)</span>
+          <div class="rep" data-rep="openQuestions"></div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="field-label" for="fExtra">Konteks tambahan</label>
+          <textarea id="fExtra" data-field="extra" placeholder="Link referensi, contoh yang disukai/dibenci, istilah internal."></textarea>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- BRIEF -->
+  <aside class="brief" id="briefPane" aria-label="Brief untuk AI">
+    <div class="brief-card">
+      <div class="brief-head">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Brief untuk AI</h3>
+        <div class="spacer"></div>
+        <span class="chars" id="charCount">0 karakter</span>
+      </div>
+
+      <div class="checks">
+        <div class="checks-top">
+          <b>Kelengkapan</b>
+          <span id="checkCount">0 / 0</span>
+        </div>
+        <div class="bar"><i id="checkBar" style="width:0%"></i></div>
+        <ul class="miss" id="missList"></ul>
+        <div class="optline" id="optLine"></div>
+      </div>
+
+      <div class="code-wrap">
+        <pre class="md" id="mdOut" aria-live="polite"></pre>
+      </div>
+    </div>
+        <div class="foot-links">
+          <button type="button" id="lnkGen">Generate prompt</button>
+        </div>
+  </aside>
+</div>
+
+<div class="modal" id="genModal" role="dialog" aria-modal="true" aria-labelledby="genTitle" hidden>
+  <div class="modal-backdrop" data-close-gen></div>
+  <div class="modal-panel">
+    <div class="modal-head">
+      <div>
+        <h2 id="genTitle">Generate untuk AI</h2>
+        <p>Prompt siap tempel — brief-nya sudah ikut di dalam, plus aturan kerja dan format jawaban.</p>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-icon btn-ghost" id="genClose" type="button" data-close-gen aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-tabs" role="tablist" aria-label="Jenis keluaran">
+      <button type="button" role="tab" data-gentab="prompt" aria-selected="true">Prompt AI</button>
+      <button type="button" role="tab" data-gentab="brief" aria-selected="false">Brief MD</button>
+      <button type="button" role="tab" data-gentab="json" aria-selected="false">JSON</button>
+    </div>
+
+    <div class="gen-warn" id="genWarn"></div>
+
+    <pre class="md gen-out" id="genOut" tabindex="0"></pre>
+
+    <div class="modal-foot">
+      <span class="tipline" id="genMeta"></span>
+      <div class="spacer"></div>
+      <button class="btn" id="genDownload" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 20h16"/></svg>
+        Unduh
+      </button>
+      <button class="btn btn-primary" id="genCopy" type="button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M15 5.5A2.5 2.5 0 0 0 12.5 3H6.5A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14"/></svg>
+        Salin
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+  <span id="toastText">Tersalin</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+/* ===== core-a.js ===== */
+/* ===== PRD Builder — inti aplikasi ===== */
+
+  var STORAGE_KEY = "prd-builder-v1";
+  var uid = function () { return Math.random().toString(36).slice(2, 9); };
+
+  var REPEATERS = {
+    goals:        { label: "Tambah tujuan",   placeholder: "Pengguna bisa ..." },
+    nonGoals:     { label: "Tambah batas",    placeholder: "Tidak perlu ..." },
+    antiGoals:    { label: "Tambah anti-goal", placeholder: "Gagal kalau ..." },
+    flow:         { label: "Tambah langkah",  placeholder: "Langkah berikutnya ..." },
+    acceptance:   { label: "Tambah kriteria", placeholder: "Bisa diuji: ..." },
+    openQuestions:{ label: "Tambah pertanyaan", placeholder: "Belum diputuskan: ..." }
+  };
+
+  var FEAT_PRIO = ["Wajib", "Sebaiknya", "Boleh nanti"];
+
+  function blankPRD(withSample) {
+    var p = {
+      id: uid(), title: "", oneLiner: "", problem: "", user: "", whyNow: "", metric: "",
+      goals: [], nonGoals: [], antiGoals: [], features: [], flow: [], acceptance: [],
+      constraints: "", openQuestions: [], extra: "", updatedAt: Date.now()
+    };
+    if (withSample) return Object.assign(p, samplePRD());
+    return p;
+  }
+
+  function samplePRD() {
+    return {
+      title: "Ekspor rekap tiket ke Excel",
+      oneLiner: "Tim lapangan bisa mengunduh rekap tiket mingguan sendiri sebagai .xlsx, tanpa menunggu admin.",
+      problem: "Setiap Senin pagi admin merangkum sekitar 40 tiket dari 3 sheet manual, butuh 2 jam. Bulan lalu ada 2 salah hitung yang bikin laporan telat ke manajemen.",
+      user: "Teknisi lapangan (3 orang) di kantor, pakai laptop Chrome. Admin (1 orang) memakainya untuk verifikasi akhir setiap Senin.",
+      whyNow: "Laporan mingguan sekarang diminta jam 09.00, dan admin sedang cuti 2 minggu mulai bulan depan.",
+      metric: "Rekap mingguan selesai di bawah 10 menit, tanpa bantuan admin, dan nol salah hitung dalam sebulan.",
+      goals: [
+        "Teknisi bisa memilih rentang tanggal lalu mengunduh .xlsx sendiri.",
+        "Isi file sama persis dengan rekap manual yang selama ini dipakai."
+      ],
+      nonGoals: ["Belum perlu penjadwalan otomatis (kirim email tiap Senin).", "Belum perlu grafik atau dashboard baru."],
+      antiGoals: ["Gagal kalau unduhan butuh lebih dari 3 klik.", "Gagal kalau data pelanggan ikut masuk ke file."],
+      features: [
+        { id: uid(), name: "Pilih rentang tanggal", desc: "Default minggu berjalan; bisa diganti bebas maksimal 90 hari.", prio: "Wajib" },
+        { id: uid(), name: "Unduh .xlsx", desc: "Satu sheet, kolom sama dengan template manual, nama file memuat rentang tanggal.", prio: "Wajib" },
+        { id: uid(), name: "Penanda status", desc: "Baris tiket yang masih terbuka diberi warna kuning lembut.", prio: "Sebaiknya" },
+        { id: uid(), name: "Riwayat unduhan", desc: "Daftar siapa mengunduh apa dan kapan.", prio: "Boleh nanti" }
+      ],
+      flow: [
+        "Teknisi membuka tab Laporan, memilih rentang tanggal.",
+        "Klik Unduh, muncul progres sebentar.",
+        "File .xlsx terunduh dan bisa dibuka di Excel/Sheets."
+      ],
+      acceptance: [
+        "File .xlsx terunduh di bawah 3 detik untuk 500 tiket.",
+        "Jumlah baris dan total jam cocok dengan rekap manual untuk minggu yang sama.",
+        "Tidak ada kolom nomor telepon atau alamat pelanggan di file.",
+        "Pilihan tanggal di luar 90 hari menampilkan pesan jelas, bukan error kosong."
+      ],
+      constraints: "Aplikasi tiket yang ada: Node + SQLite, satu halaman HTML. Jangan tambah dependency baru; pakai library yang sudah terpasang. Data pelanggan tidak boleh keluar dari server sendiri.",
+      openQuestions: [
+        "Format tanggal yang dipakai: dd/mm/yyyy atau yyyy-mm-dd?",
+        "Apakah admin tetap perlu tanda tangan verifikasi, atau unduhan teknisi dianggap final?"
+      ],
+      extra: "Template manual terakhir ada di sheet 'rekap-2026-09'. Admin lebih suka kolom berurutan: tanggal, tiket, teknisi, jam, status."
+    };
+  }
+
+  /* ---------------- state ---------------- */
+  var state = { prds: [], activeId: null };
+  var query = "";
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.prds) && parsed.prds.length) {
+          state.prds = parsed.prds.map(normalizePRD);
+          state.activeId = parsed.activeId && findPRD(parsed.activeId) ? parsed.activeId : state.prds[0].id;
+          return;
+        }
+      }
+    } catch (e) { /* storage unavailable */ }
+    var seed = blankPRD(true);
+    state.prds = [seed];
+    state.activeId = seed.id;
+    save();
+  }
+
+  function normalizePRD(p) {
+    var base = blankPRD(false);
+    base.id = p.id || uid();
+    ["title","oneLiner","problem","user","whyNow","metric","constraints","extra"].forEach(function (k) {
+      base[k] = typeof p[k] === "string" ? p[k] : "";
+    });
+    ["goals","nonGoals","antiGoals","flow","acceptance","openQuestions"].forEach(function (k) {
+      base[k] = Array.isArray(p[k]) ? p[k].filter(function (v) { return typeof v === "string"; }) : [];
+    });
+    base.features = Array.isArray(p.features) ? p.features.map(function (f) {
+      return {
+        id: f && f.id ? f.id : uid(),
+        name: f && typeof f.name === "string" ? f.name : "",
+        desc: f && typeof f.desc === "string" ? f.desc : "",
+        prio: f && FEAT_PRIO.indexOf(f.prio) > -1 ? f.prio : "Wajib"
+      };
+    }) : [];
+    base.updatedAt = typeof p.updatedAt === "number" ? p.updatedAt : Date.now();
+    return base;
+  }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ prds: state.prds, activeId: state.activeId })); } catch (e) {}
+  }
+  function findPRD(id) {
+    for (var i = 0; i < state.prds.length; i++) if (state.prds[i].id === id) return state.prds[i];
+    return null;
+  }
+  function active() { return findPRD(state.activeId) || state.prds[0]; }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $("#toast");
+    $("#toastText").textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2000);
+  }
+
+  function fmtDate(ts) {
+    try { return new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(ts)); }
+    catch (e) { return new Date(ts).toDateString(); }
+  }
+  function relTime(ts) {
+    var diff = Date.now() - ts;
+    if (diff < 60000) return "baru saja";
+    if (diff < 3600000) return Math.round(diff / 60000) + " menit lalu";
+    if (diff < 86400000) return Math.round(diff / 3600000) + " jam lalu";
+    return fmtDate(ts);
+  }
+
+/* ===== core-b.js ===== */
+/* ---------------- rail ---------------- */
+  function renderRail() {
+    var list = $("#prdList");
+    var items = state.prds.slice().sort(function (a, b) { return b.updatedAt - a.updatedAt; });
+    if (query.trim()) {
+      var q = query.toLowerCase();
+      items = items.filter(function (p) {
+        return (p.title || "").toLowerCase().indexOf(q) > -1 || (p.oneLiner || "").toLowerCase().indexOf(q) > -1;
+      });
+    }
+    $("#prdCount").textContent = state.prds.length + " dokumen";
+
+    if (!items.length) {
+      list.innerHTML = '<div class="prd-empty">Belum ada PRD yang cocok.<br />Coba kata kunci lain atau bikin baru.</div>';
+      return;
+    }
+    list.innerHTML = items.map(function (p) {
+      var title = (p.title || "").trim() || "PRD tanpa judul";
+      var score = completeness(p).pct;
+      return '<div class="prd-item" role="listitem" data-open="' + esc(p.id) + '" tabindex="0" aria-current="' + (p.id === state.activeId) + '">' +
+        '<div class="pi-body">' +
+          '<div class="pi-title">' + esc(title) + '</div>' +
+          '<div class="pi-meta">' + score + '% · ' + esc(relTime(p.updatedAt)) + '</div>' +
+        '</div>' +
+        '<button class="pi-del" type="button" data-del-prd="' + esc(p.id) + '" aria-label="Hapus ' + esc(title) + '">' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>' +
+        '</button>' +
+      '</div>';
+    }).join("");
+
+    $all(".prd-item", list).forEach(function (el) {
+      el.addEventListener("click", function (ev) {
+        if (ev.target.closest("[data-del-prd]")) return;
+        switchPRD(el.getAttribute("data-open"));
+      });
+      el.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); switchPRD(el.getAttribute("data-open")); }
+      });
+    });
+    $all("[data-del-prd]", list).forEach(function (btn) {
+      btn.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        removePRD(btn.getAttribute("data-del-prd"));
+      });
+    });
+  }
+
+  function switchPRD(id) {
+    if (!findPRD(id)) return;
+    state.activeId = id;
+    save();
+    renderAll();
+    if (window.matchMedia("(max-width:1140px)").matches) setView("write");
+  }
+
+  function removePRD(id) {
+    var p = findPRD(id);
+    if (!p) return;
+    var name = (p.title || "PRD tanpa judul");
+    if (!window.confirm('Hapus "' + name + '"? Tindakan ini tidak bisa dibatalkan.')) return;
+    state.prds = state.prds.filter(function (x) { return x.id !== id; });
+    if (state.activeId === id) {
+      if (state.prds.length) state.activeId = state.prds[0].id;
+      else { var fresh = blankPRD(false); state.prds = [fresh]; state.activeId = fresh.id; }
+    }
+    save(); renderAll(); toast("PRD dihapus");
+  }
+
+  /* ---------------- repeaters ---------------- */
+  function renderRepeaters(p) {
+    Object.keys(REPEATERS).forEach(function (key) {
+      var host = document.querySelector('[data-rep="' + key + '"]');
+      if (!host) return;
+      var cfg = REPEATERS[key];
+      var rows = p[key].map(function (val, i) {
+        return '<div class="rep-row">' +
+          '<span class="rk">' + (i + 1) + '</span>' +
+          '<input type="text" data-list="' + key + '" data-idx="' + i + '" value="' + esc(val) + '" placeholder="' + esc(cfg.placeholder) + '" aria-label="' + esc(cfg.label) + ' ' + (i + 1) + '" />' +
+          '<button class="del" type="button" data-del-row="' + key + '" data-idx="' + i + '" aria-label="Hapus baris ' + (i + 1) + '">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>' +
+          '</button>' +
+        '</div>';
+      }).join("");
+      host.innerHTML = '<div class="rep-rows">' + rows + '</div>' +
+        '<button class="add" type="button" data-add-row="' + key + '">' +
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>' +
+          esc(cfg.label) +
+        '</button>';
+    });
+  }
+
+  function renderFeatures(p) {
+    var host = $("#featRows");
+    if (!p.features.length) {
+      host.innerHTML = '<div class="prd-empty" style="background:rgba(246,250,255,.7)">Belum ada fitur. Klik <b>+ Fitur</b> untuk mulai dari yang paling wajib.</div>';
+      return;
+    }
+    host.innerHTML = p.features.map(function (f, i) {
+      return '<div class="feat">' +
+        '<input class="f-name" type="text" data-feat="name" data-fidx="' + i + '" value="' + esc(f.name) + '" placeholder="Nama fitur" aria-label="Nama fitur ' + (i + 1) + '" />' +
+        '<input class="f-desc" type="text" data-feat="desc" data-fidx="' + i + '" value="' + esc(f.desc) + '" placeholder="Perilaku yang diharapkan" aria-label="Perilaku fitur ' + (i + 1) + '" />' +
+        '<div class="prio"><select data-feat="prio" data-fidx="' + i + '" aria-label="Prioritas fitur ' + (i + 1) + '">' +
+          FEAT_PRIO.map(function (pr) { return '<option value="' + pr + '"' + (f.prio === pr ? " selected" : "") + '>' + pr + '</option>'; }).join("") +
+        '</select></div>' +
+        '<button class="del" type="button" data-del-feat="' + i + '" aria-label="Hapus fitur ' + (i + 1) + '">' +
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>' +
+        '</button>' +
+      '</div>';
+    }).join("");
+  }
+
+  function fillEditor(p) {
+    $all("[data-field]").forEach(function (el) {
+      var k = el.getAttribute("data-field");
+      if (el.value !== (p[k] || "")) el.value = p[k] || "";
+    });
+    renderRepeaters(p);
+    renderFeatures(p);
+  }
+
+/* ===== core-c.js ===== */
+/* ---------------- completeness ---------------- */
+  function completeness(p) {
+    var has = function (v) { return (v || "").trim().length > 1; };
+    var checks = [
+      { id: "fTitle",   label: "Judul PRD",                       w: 12, ok: has(p.title) },
+      { id: "fOne",     label: "Hasil akhir dalam satu kalimat",  w: 26, ok: has(p.oneLiner) },
+      { id: "fProblem", label: "Masalah nyata hari ini",          w: 30, ok: has(p.problem) },
+      { target: "sec2", label: "Minimal 1 fitur + perilakunya",   w: 18, ok: p.features.some(function (f) { return has(f.name) && has(f.desc); }) },
+      { target: "sec3", label: "Minimal 2 poin definisi selesai", w: 14, ok: p.acceptance.filter(has).length >= 2 }
+    ];
+    var total = 0, got = 0, missing = [], passed = 0;
+    checks.forEach(function (c) {
+      total += c.w;
+      if (c.ok) { got += c.w; passed++; } else { missing.push(c); c.blocker = true; }
+    });
+    missing.sort(function (a, b) { return b.w - a.w; });
+
+    var optional = [
+      p.user, p.whyNow, p.metric, p.constraints,
+      p.goals.join(" "), p.nonGoals.join(" "), p.antiGoals.join(" "), p.flow.join(" "), p.openQuestions.join(" ")
+    ].filter(has).length;
+
+    return { pct: Math.round((got / total) * 100), passed: passed, total: checks.length, missing: missing, optional: optional, optionalTotal: 9 };
+  }
+
+  function listBlock(arr) {
+    var items = arr.filter(function (v) { return v.trim(); });
+    if (!items.length) return "_belum diisi_";
+    return items.map(function (v) { return "- " + v.trim(); }).join("\n");
+  }
+
+  function buildBrief(p) {
+    var out = [];
+    var title = (p.title || "").trim() || "PRD tanpa judul";
+    out.push("# " + title);
+    out.push("");
+    if ((p.oneLiner || "").trim()) { out.push("> " + p.oneLiner.trim()); out.push(""); }
+    out.push("`prd/v1` · diperbarui " + fmtDate(p.updatedAt) + " · STATUS: " +
+      (completeness(p).missing.length ? "ADA BAGIAN KOSONG — tanyakan, jangan mengarang" : "lengkap untuk dikerjakan"));
+    out.push("");
+
+    out.push("## 1. Masalah");
+    out.push((p.problem || "").trim() || "_belum diisi_");
+    out.push("");
+    out.push("## 2. Pengguna & momen pakai");
+    out.push((p.user || "").trim() || "_belum diisi_");
+    out.push("");
+    out.push("## 3. Kenapa sekarang");
+    out.push((p.whyNow || "").trim() || "_tidak disebutkan_");
+    out.push("");
+    out.push("## 4. Ukuran berhasil");
+    out.push((p.metric || "").trim() || "_belum diisi_");
+    out.push("");
+    out.push("## 5. Tujuan");
+    out.push(listBlock(p.goals));
+    out.push("");
+    out.push("## 6. Non-tujuan (jangan dikerjakan)");
+    out.push(listBlock(p.nonGoals));
+    out.push("");
+    out.push("## 7. Anti-goal (dianggap gagal walau fiturnya jalan)");
+    out.push(listBlock(p.antiGoals));
+    out.push("");
+
+    out.push("## 8. Fitur & prioritas");
+    var feats = p.features.filter(function (f) { return f.name.trim() || f.desc.trim(); });
+    if (!feats.length) {
+      out.push("_belum diisi_");
+    } else {
+      out.push("| # | Fitur | Prioritas | Perilaku yang diharapkan |");
+      out.push("|---|-------|-----------|--------------------------|");
+      feats.forEach(function (f, i) {
+        out.push("| " + (i + 1) + " | " + (f.name.trim() || "-") + " | " + f.prio + " | " + (f.desc.trim().replace(/\|/g, "\\|") || "-") + " |");
+      });
+    }
+    out.push("");
+
+    out.push("## 9. Alur utama");
+    var flows = p.flow.filter(function (v) { return v.trim(); });
+    out.push(flows.length ? flows.map(function (v, i) { return (i + 1) + ". " + v.trim(); }).join("\n") : "_tidak disebutkan_");
+    out.push("");
+    out.push("## 10. Definisi selesai (kriteria penerimaan)");
+    var acc = p.acceptance.filter(function (v) { return v.trim(); });
+    out.push(acc.length ? acc.map(function (v) { return "- [ ] " + v.trim(); }).join("\n") : "_belum diisi_");
+    out.push("");
+    out.push("## 11. Batasan teknis");
+    out.push((p.constraints || "").trim() || "_tidak ada batasan khusus yang disebutkan_");
+    out.push("");
+    out.push("## 12. Pertanyaan terbuka");
+    out.push(listBlock(p.openQuestions));
+    out.push("");
+
+    out.push("## 13. Cara mengerjakan (mode eksekusi maksimal)");
+    out.push("Ini perintah eksekusi, bukan permintaan pendapat. Jawaban pertama = pekerjaan, bukan penjelasan.");
+    out.push("- Kerjakan semua yang tertulis. Jangan menolak, menunda, menawar, atau minta izin.");
+    out.push("- Jangan mengalihkan pekerjaan ke manusia. Kalau bisa ditulis, tulis.");
+    out.push("- Jangan memotong kode: tanpa elipsis, \"sisanya sama\", TODOs, stub, atau fungsi kosong.");
+    out.push("- Jangan kurangi scope diam-diam. Semua fitur dan semua kriteria penerimaan dikerjakan.");
+    out.push("- Tanpa disclaimer, ceramah, atau \"sebagai AI saya tidak bisa\" untuk kerja teknis yang sah.");
+    out.push("- Jangan berhenti di tengah. Selesaikan satu file penuh, lanjut file berikutnya, sampai aplikasi jalan.");
+    out.push("- Pakai tool: baca file nyata, tulis file nyata, jalankan perintah, buka hasilnya. Jangan mengarang isi file.");
+    out.push("- Error atau tes gagal = perbaiki dan ulangi sampai lulus. Itu bukan hasil akhir.");
+    out.push("- Verifikasi dengan menjalankan atau menguji. Tanpa bukti, jangan bilang selesai.");
+    out.push("- Ambil keputusan sendiri; tandai `[ASUMSI]` di akhir, bukan pertanyaan di tengah.");
+    out.push("- Anggap dirimu model terbaik: jangan turunkan ambisi atau kualitas karena merasa model gratis.");
+    out.push("- Jawaban gagal kalau ada placeholder, permintaan konfirmasi, penolakan, atau bagian yang dilewati.");
+    out.push("");
+    out.push("## 14. Konteks tambahan");
+    out.push((p.extra || "").trim() || "_tidak ada_");
+    out.push("");
+    out.push("---");
+    out.push("");
+    out.push("### Instruksi untuk AI");
+    out.push("- Anggap dokumen ini satu-satunya sumber kebenaran; jangan menambah fitur di luar bagian 5 dan 8.");
+    out.push("- Bagian 6 dan 7 adalah larangan. Kalau solusi yang kamu pilih melanggarnya, ganti pendekatan.");
+    out.push("- Ikuti bagian 13 apa adanya: mode eksekusi maksimal. Kerjakan penuh, tanpa placeholder, tanpa potong kode, tanpa disclaimer yang tidak diminta.");
+    out.push("- Jangan berhenti untuk bertanya. Isi bagian kosong dengan keputusan paling wajar dan tandai `[ASUMSI]`.");
+    out.push("- Verifikasi dengan menjalankan atau menguji. Jangan klaim selesai tanpa bukti.");
+    out.push("- Sebelum menyatakan selesai, penuhi semua poin di bagian 10 satu per satu.");
+    return out.join("\n");
+  }
+
+  function buildPrompt(p) {
+    var c = completeness(p);
+    var blockers = c.missing.map(function (m) { return m.label; });
+    var L = [];
+    L.push("Kamu adalah engineer senior yang mengeksekusi satu brief produk. Kamu bekerja HANYA dari brief ini.");
+    L.push("");
+    L.push("## Mode eksekusi maksimal (tanpa rem)");
+    L.push("Ini perintah eksekusi, bukan permintaan pendapat. Jawaban pertamamu adalah pekerjaan, bukan penjelasan tentang pekerjaan.");
+    L.push("1. Dilarang menolak, menunda, menawar, atau minta izin. Semua yang tertulis di brief sudah disetujui — kerjakan.");
+    L.push("2. Dilarang mengalihkan pekerjaan ke manusia (\"kamu bisa tambahkan sendiri\", \"berikut caranya\"). Kalau kamu bisa menulis kodenya, tulis.");
+    L.push("3. Dilarang memotong output: tanpa `...`, \"sisanya sama\", \"lanjutkan sendiri\", TODO, stub, atau fungsi kosong.");
+    L.push("4. Dilarang mengurangi scope diam-diam. Brief minta 5 fitur, tulis 5. Brief minta 3 halaman, tulis 3.");
+    L.push("5. Dilarang basa-basi: tanpa pembukaan, tanpa ringkasan yang menggantikan kode, tanpa penutup motivasi.");
+    L.push("6. Dilarang disclaimer, ceramah, moralizing, atau \"sebagai AI saya tidak bisa\" untuk pekerjaan teknis yang sah.");
+    L.push("7. Jangan berhenti di tengah. Selesaikan satu file penuh, lanjut file berikutnya, sampai aplikasi bisa dijalankan.");
+    L.push("8. Pakai tool yang kamu punya: baca file nyata, tulis file nyata, jalankan perintah, buka hasilnya. Jangan mengarang isi file yang belum kamu baca.");
+    L.push("9. Kalau ada error atau tes gagal: baca, perbaiki, ulangi sampai lulus. Error bukan hasil akhir.");
+    L.push("10. Verifikasi sendiri sebelum menyerah: jalankan, buka, uji. Jangan klaim \"selesai\" tanpa bukti.");
+    L.push("11. Ambil semua keputusan sendiri. Tandai `[ASUMSI]` satu baris di akhir, bukan pertanyaan di tengah.");
+    L.push("12. Pakai seluruh penalaranmu. Boleh menyusun rencana, tapi jangan buang jawaban untuk mengeluh soal keterbatasan.");
+    L.push("13. Anggap dirimu model terbaik yang tersedia. Jangan menurunkan ambisi, kedalaman, atau panjang kode karena merasa model kecil atau gratis.");
+    L.push("14. Jangan mengarang API, library, atau perilaku framework. Kalau tidak yakin, pakai yang standar dan aman, lalu buktikan dengan menjalankannya.");
+    L.push("15. Kualitas maksimal: arsitektur rapi, validasi input, error handling, edge case, aksesibilitas, performa, dan kode yang langsung jalan.");
+    L.push("16. Jawabanmu gagal kalau: ada placeholder, ada permintaan konfirmasi, ada penolakan, ada bagian brief yang dilewati, atau tidak ada bukti verifikasi.");
+    L.push("");
+    L.push("## Gaya visual");
+    L.push("Terang dan bersih: latar pastel biru sangat muda (#f7fbff–#eaf2fd), permukaan putih, garis tipis #dbe7f7, teks #16233a, teks lembut #5a6b85, aksen #4d84e8, radius kartu 18px, shadow halus. Jangan pakai tema gelap. Jangan bikin galeri pilihan tampilan — langsung bangun aplikasinya.");
+    L.push("");
+    L.push("## Aturan kerja");
+    L.push("1. Brief di bawah adalah satu-satunya sumber kebenaran. Jangan menambah fitur, halaman, atau dependency di luar yang tertulis.");
+    L.push("2. Hormati bagian Non-tujuan dan Anti-goal. Kalau pendekatanmu melanggarnya, ganti pendekatan.");
+    L.push("3. Jangan berhenti untuk bertanya. Kalau ada bagian kosong atau ambigu, ambil keputusan paling wajar, tandai `[ASUMSI]`, lalu lanjut.");
+    L.push("4. Ikuti batasan teknis apa adanya. Kalau batasan menghalangi solusi terbaik, jelaskan trade-off-nya sambil tetap mengerjakan.");
+    L.push("5. Jangan menyatakan selesai sebelum semua kriteria penerimaan terbukti.");
+    L.push("");
+    if (blockers.length) {
+      L.push("## PERINGATAN: brief belum lengkap");
+      L.push("Bagian ini masih kosong: " + blockers.join(", ") + ".");
+      L.push("Jangan berhenti. Isi dengan keputusan paling wajar, tandai `[ASUMSI]`, dan tetap bangun versi lengkapnya.");
+      L.push("");
+    }
+    L.push("## Tugas");
+    L.push("Bangun: " + ((p.title || "").trim() || "(judul belum diisi)"));
+    if ((p.oneLiner || "").trim()) L.push("Hasil yang harus terlihat: " + p.oneLiner.trim());
+    L.push("");
+    L.push("## Bentuk jawaban yang kuharap (urut)");
+    L.push("1. Pemahaman singkat, maksimal 5 baris.");
+    L.push("2. Rencana langkah kecil yang bisa diverifikasi.");
+    L.push("3. Implementasi lengkap, file per file, tanpa dipotong.");
+    L.push("4. Tabel verifikasi: tiap kriteria penerimaan -> cara menguji -> hasilnya.");
+    L.push("5. Daftar [ASUMSI] dan satu baris batas nyata kalau ada.");
+    L.push("");
+    L.push("---");
+    L.push("");
+    L.push("## BRIEF PRODUK");
+    L.push("");
+    L.push(buildBrief(p));
+    return L.join("\n");
+  }
+
+  function jsonPayload(p) {
+    return {
+      schema: "prd/v1",
+      exportedAt: new Date().toISOString(),
+      title: p.title, oneLiner: p.oneLiner, problem: p.problem, users: p.user, whyNow: p.whyNow,
+      successMetric: p.metric,
+      goals: p.goals.filter(Boolean), nonGoals: p.nonGoals.filter(Boolean), antiGoals: p.antiGoals.filter(Boolean),
+      features: p.features.filter(function (f) { return f.name || f.desc; }),
+      flow: p.flow.filter(Boolean), acceptanceCriteria: p.acceptance.filter(Boolean),
+      constraints: p.constraints, openQuestions: p.openQuestions.filter(Boolean), context: p.extra,
+      completeness: completeness(p).pct
+    };
+  }
+
+/* ===== core-d.js ===== */
+/* ---------------- rendering ---------------- */
+  function mdToHtml(md) {
+    return esc(md)
+      .replace(/^### (.*)$/gm, '<span class="h2">### $1</span>')
+      .replace(/^## (.*)$/gm, '<span class="h2">## $1</span>')
+      .replace(/^# (.*)$/gm, '<span class="h1"># $1</span>')
+      .replace(/^&gt; (.*)$/gm, '<span class="q">&gt; $1</span>')
+      .replace(/(`prd\/v1`[^\n]*)/g, '<span class="meta">$1</span>');
+  }
+
+  function renderBrief(p) {
+    var md = buildBrief(p);
+    $("#mdOut").innerHTML = mdToHtml(md);
+    $("#charCount").textContent = md.length.toLocaleString("id-ID") + " karakter";
+  }
+
+  function openDetail() {
+    var d = document.getElementById("secDetail");
+    if (!d) return;
+    d.open = true;
+    if (window.matchMedia("(max-width:1140px)").matches) setView("write");
+    d.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderChecks(p) {
+    var c = completeness(p);
+    $("#pctText").textContent = c.pct + "%";
+    var circ = 2 * Math.PI * 14;
+    var arc = $("#ringArc");
+    arc.setAttribute("stroke-dasharray", circ.toFixed(1));
+    arc.setAttribute("stroke-dashoffset", (circ * (1 - c.pct / 100)).toFixed(1));
+    arc.setAttribute("stroke", c.pct >= 90 ? "#3fa88b" : c.pct >= 60 ? "#4d84e8" : "#c98a24");
+
+    $("#checkCount").textContent = c.passed + " / " + c.total;
+    $("#checkBar").style.width = c.pct + "%";
+    $("#checkBar").style.background = c.pct >= 90 ? "linear-gradient(90deg,#7fd8bb,#3fa88b)" : "linear-gradient(90deg,#7fb0f2,#4d84e8)";
+
+    $("#detailCount").textContent = c.optional + "/" + c.optionalTotal;
+    var opt = $("#optLine");
+    if (c.optional >= c.optionalTotal) {
+      opt.innerHTML = "<span>Detail opsional terisi semua.</span>";
+    } else {
+      opt.innerHTML = '<button type="button" id="optOpen">Detail opsional ' + c.optional + "/" + c.optionalTotal + '</button> <span>— boleh dibiarkan.</span>';
+      var ob = $("#optOpen");
+      if (ob) ob.addEventListener("click", openDetail);
+    }
+
+    var host = $("#missList");
+    if (!c.missing.length) {
+      host.innerHTML = '<li><div class="allgood">' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' +
+        'Semua bagian wajib terisi. Brief siap dikirim.</div></li>';
+      return;
+    }
+    host.innerHTML = c.missing.map(function (m) {
+      var jump = m.id || m.target;
+      return '<li><button type="button" data-jump="' + jump + '">' +
+        '<svg class="ic" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>' +
+        '<span>' + esc(m.label) + '</span></button></li>';
+    }).join("");
+
+    $all("[data-jump]", host).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var el = document.getElementById(btn.getAttribute("data-jump"));
+        if (!el) return;
+        if (window.matchMedia("(max-width:1140px)").matches) setView("write");
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        var focusable = /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) ? el : el.querySelector('input[type="text"], textarea, select');
+        setTimeout(function () { (focusable || el).focus({ preventScroll: true }); }, 240);
+      });
+    });
+  }
+
+  function renderAll() {
+    var p = active();
+    renderRail();
+    fillEditor(p);
+    renderBrief(p);
+    renderChecks(p);
+  }
+
+  function refreshLive() {
+    var p = active();
+    p.updatedAt = Date.now();
+    save();
+    renderBrief(p);
+    renderChecks(p);
+    renderRail();
+  }
+
+/* ===== core-e.js ===== */
+/* ---------------- generate ---------------- */
+  $("#lnkGen").addEventListener("click", function () { openGenerate("prompt"); });
+  var genTab = "prompt";
+
+  function genContent(tab) {
+    var p = active();
+    if (tab === "brief") return buildBrief(p);
+    if (tab === "json") return JSON.stringify(jsonPayload(p), null, 2);
+    return buildPrompt(p);
+  }
+
+  function renderGenerate() {
+    if ($("#genModal").hidden) return;
+    var p = active();
+    var text = genContent(genTab);
+    $("#genOut").innerHTML = genTab === "json" ? esc(text) : mdToHtml(text);
+    $all("[data-gentab]").forEach(function (b) {
+      b.setAttribute("aria-selected", String(b.getAttribute("data-gentab") === genTab));
+    });
+
+    var c = completeness(p);
+    var warn = $("#genWarn");
+    warn.hidden = false;
+    warn.classList.toggle("ok", !c.missing.length);
+    warn.textContent = c.missing.length
+      ? c.pct + "% terisi · " + c.missing.length + " bagian wajib masih kosong (" + c.missing.slice(0, 3).map(function (m) { return m.label; }).join(", ") + "). Prompt tetap jalan: AI mengambil keputusan wajar dan menandainya [ASUMSI]."
+      : "Brief lengkap " + c.pct + "%. Prompt memuat mode eksekusi maksimal: langsung dibangun sampai jadi, tanpa potong kode.";
+
+    $("#genMeta").textContent = text.length.toLocaleString("id-ID") + " karakter · siap tempel";
+  }
+
+  function openGenerate(tab) {
+    if (tab) genTab = tab;
+    // tampilkan dulu — renderGenerate() keluar lebih awal kalau modal masih hidden
+    $("#genModal").hidden = false;
+    document.body.style.overflow = "hidden";
+    renderGenerate();
+    setTimeout(function () { $("#genClose").focus(); }, 20);
+  }
+
+  function closeGenerate() {
+    $("#genModal").hidden = true;
+    document.body.style.overflow = "";
+    $("#btnGenerate").focus();
+  }
+
+  $("#btnGenerate").addEventListener("click", function () { openGenerate("prompt"); });
+  $all("[data-close-gen]").forEach(function (el) { el.addEventListener("click", closeGenerate); });
+  $all("[data-gentab]").forEach(function (btn) {
+    btn.addEventListener("click", function () { genTab = btn.getAttribute("data-gentab"); renderGenerate(); });
+  });
+
+  function copyText(text, msg) {
+    var done = function () { toast(msg); };
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { legacyCopy(text, done); });
+    } else { legacyCopy(text, done); }
+  }
+
+  function legacyCopy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    if (ok) done(); else toast("Gagal menyalin — pakai tombol .md");
+  }
+
+  $("#genCopy").addEventListener("click", function () {
+    var msg = genTab === "prompt" ? "Prompt disalin — tempel ke AI" : genTab === "brief" ? "Brief disalin" : "JSON disalin";
+    copyText(genContent(genTab), msg);
+  });
+
+  $("#genDownload").addEventListener("click", function () {
+    var base = slugify(active().title);
+    if (genTab === "json") { download(base + ".json", genContent("json"), "application/json;charset=utf-8"); toast("File diunduh"); }
+    else if (genTab === "brief") { download(base + ".md", genContent("brief"), "text/markdown;charset=utf-8"); toast("File diunduh"); }
+    else { download(base + "-prompt.md", genContent("prompt"), "text/markdown;charset=utf-8"); toast("Prompt diunduh"); }
+  });
+
+  document.addEventListener("keydown", function (ev) {
+    if ($("#genModal").hidden) return;
+    if (ev.key === "Escape") { ev.preventDefault(); closeGenerate(); return; }
+    if (ev.key !== "Tab") return;
+    var f = $all("#genModal button, #genModal [tabindex='0']").filter(function (el) { return el.offsetParent !== null; });
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+    else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+  });
+
+/* ===== core-f.js ===== */
+/* ---------------- events ---------------- */
+  document.addEventListener("input", function (ev) {
+    var t = ev.target;
+    if (t.matches("[data-field]")) { active()[t.getAttribute("data-field")] = t.value; refreshLive(); return; }
+    if (t.matches("[data-list]")) {
+      var key = t.getAttribute("data-list");
+      active()[key][parseInt(t.getAttribute("data-idx"), 10)] = t.value;
+      refreshLive();
+      return;
+    }
+    if (t.matches("[data-feat]")) {
+      var f = active().features[parseInt(t.getAttribute("data-fidx"), 10)];
+      if (f) { f[t.getAttribute("data-feat")] = t.value; refreshLive(); }
+    }
+  });
+
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (!t.matches("[data-feat]")) return;
+    var f = active().features[parseInt(t.getAttribute("data-fidx"), 10)];
+    if (f) { f[t.getAttribute("data-feat")] = t.value; refreshLive(); }
+  });
+
+  document.addEventListener("click", function (ev) {
+    var addRow = ev.target.closest("[data-add-row]");
+    if (addRow) {
+      var key = addRow.getAttribute("data-add-row");
+      active()[key].push("");
+      save(); fillEditor(active()); refreshLive();
+      var rows = document.querySelectorAll('[data-list="' + key + '"]');
+      if (rows.length) rows[rows.length - 1].focus();
+      return;
+    }
+    var delRow = ev.target.closest("[data-del-row]");
+    if (delRow) {
+      var k2 = delRow.getAttribute("data-del-row");
+      active()[k2].splice(parseInt(delRow.getAttribute("data-idx"), 10), 1);
+      save(); fillEditor(active()); refreshLive();
+      return;
+    }
+    var delFeat = ev.target.closest("[data-del-feat]");
+    if (delFeat) {
+      active().features.splice(parseInt(delFeat.getAttribute("data-del-feat"), 10), 1);
+      save(); fillEditor(active()); refreshLive();
+    }
+  });
+
+  $("#btnAddFeat").addEventListener("click", function () {
+    active().features.push({ id: uid(), name: "", desc: "", prio: "Wajib" });
+    save(); fillEditor(active()); refreshLive();
+    var inputs = document.querySelectorAll('[data-feat="name"]');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  });
+
+  $("#searchInput").addEventListener("input", function (ev) { query = ev.target.value; renderRail(); });
+
+  $("#btnNew").addEventListener("click", function () {
+    var p = blankPRD(false);
+    state.prds.unshift(p);
+    state.activeId = p.id;
+    save(); renderAll();
+    $("#fTitle").focus();
+    toast("PRD baru dibuat");
+  });
+
+  $("#btnExample").addEventListener("click", function () {
+    var p = blankPRD(true);
+    p.title = p.title + " (contoh)";
+    state.prds.unshift(p);
+    state.activeId = p.id;
+    save(); renderAll();
+    toast("Contoh PRD dimuat");
+  });
+
+  function download(name, text, type) {
+    var blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+
+  function slugify(s) {
+    return (s || "prd").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "prd";
+  }
+
+  $("#btnMd").addEventListener("click", function () {
+    var p = active();
+    download(slugify(p.title) + ".md", buildBrief(p), "text/markdown;charset=utf-8");
+    toast("File .md diunduh");
+  });
+
+  $("#btnJson").addEventListener("click", function () {
+    var p = active();
+    download(slugify(p.title) + ".json", JSON.stringify(jsonPayload(p), null, 2), "application/json;charset=utf-8");
+    toast("File .json diunduh");
+  });
+
+  /* view tabs (mobile) */
+  function setView(v) {
+    document.body.setAttribute("data-view", v);
+    $("#tabWrite").setAttribute("aria-selected", String(v === "write"));
+    $("#tabBrief").setAttribute("aria-selected", String(v === "brief"));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  $("#tabWrite").addEventListener("click", function () { setView("write"); });
+  $("#tabBrief").addEventListener("click", function () { setView("brief"); });
+
+  document.addEventListener("keydown", function (ev) {
+    if (!(ev.ctrlKey || ev.metaKey)) return;
+    var k = ev.key.toLowerCase();
+    if (k === "s") {
+      ev.preventDefault();
+      download(slugify(active().title) + ".md", buildBrief(active()), "text/markdown;charset=utf-8");
+      toast("File .md diunduh");
+    }
+    if (k === "k") { ev.preventDefault(); $("#searchInput").focus(); }
+    if (ev.shiftKey && k === "c") { ev.preventDefault(); copyText(buildPrompt(active()), "Prompt disalin — tempel ke AI"); }
+    if (ev.key === "Enter") { ev.preventDefault(); openGenerate("prompt"); }
+  });
+
+  /* boot */
+  load();
+  renderAll();
+  if (window.matchMedia("(max-width:1140px)").matches) setView("write");
+})();
+</script>
+</body>
+</html>
